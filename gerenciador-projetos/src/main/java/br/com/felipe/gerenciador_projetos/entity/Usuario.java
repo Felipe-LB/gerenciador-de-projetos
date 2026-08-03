@@ -5,6 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Entity
 @Table(name = "usuarios")
 @Getter @Setter
@@ -28,4 +33,24 @@ public class Usuario {
     )
     @JoinColumn(name = "perfil_id", unique = true)
     private Perfil perfil;
+
+    @OneToMany(
+            mappedBy = "proprietario",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Projeto> projetosProprios = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "colaboradores")
+    private Set<Projeto> projetosColaborados = new HashSet<>();
+
+    public void addProjetoProprio(Projeto projeto) {
+        projetosProprios.add(projeto);
+        projeto.setProprietario(this);
+    }
+
+    public void removeProjetoProprio(Projeto projeto) {
+        projetosProprios.remove(projeto);
+        projeto.setProprietario(null);
+    }
 }
